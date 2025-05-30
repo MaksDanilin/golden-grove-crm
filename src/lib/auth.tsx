@@ -23,33 +23,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchCrmUser(session.user.id);
-      } else {
-        setLoading(false);
-      }
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        await fetchCrmUser(session.user.id);
-      } else {
-        setCrmUser(null);
-        setLoading(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    // For demo purposes, just set loading to false initially
+    setLoading(false);
   }, []);
 
   const fetchCrmUser = async (userId: string) => {
@@ -73,15 +48,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    // Mock authentication for demo purposes
+    const validCredentials = [
+      { email: "admin@goldengrove.com", password: "password123" },
+      { email: "sales@goldengrove.com", password: "password123" }
+    ];
+
+    const isValidCredential = validCredentials.some(
+      cred => cred.email === email && cred.password === password
+    );
+
+    if (isValidCredential) {
+      // Create a mock session for demo purposes
+      const mockUser = {
+        id: email === "admin@goldengrove.com" ? "admin-123" : "sales-123",
+        email: email,
+        role: email === "admin@goldengrove.com" ? "admin" : "sales"
+      };
+
+      // Set mock user data
+      setUser(mockUser as User);
+      setSession({ user: mockUser } as Session);
+      setCrmUser({
+        id: mockUser.id,
+        email: mockUser.email,
+        name: email === "admin@goldengrove.com" ? "Admin User" : "Sales Rep",
+        role: mockUser.role,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+      setLoading(false);
+
+      return { error: null };
+    }
+    return { error: { message: "Invalid email or password" } as AuthError };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // Clear mock session
+    setUser(null);
+    setSession(null);
+    setCrmUser(null);
+    setLoading(false);
   };
 
   const value = {
