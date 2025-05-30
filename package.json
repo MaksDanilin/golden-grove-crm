@@ -23,7 +23,7 @@
     "@types/papaparse": "^5.3.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "date-fns": "^4.1.0",
+    "date-fns": "^3.6.0",
     "lucide-react": "^0.475.0",
     "next": "^15.3.2",
     "next-themes": "^0.4.6",
@@ -49,6 +49,6 @@
     "eslint-config-next": "15.1.7",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.8.3"
+    "typescript": "^5.7.3"
   }
 }
