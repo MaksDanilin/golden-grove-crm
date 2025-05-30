@@ -48,40 +48,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    // Mock authentication for demo purposes
-    const validCredentials = [
-      { email: "admin@goldengrove.com", password: "password123" },
-      { email: "sales@goldengrove.com", password: "password123" }
-    ];
+    return new Promise<{ error: AuthError | null }>((resolve) => {
+      // Mock authentication for demo purposes
+      const validCredentials = [
+        { email: "admin@goldengrove.com", password: "password123" },
+        { email: "sales@goldengrove.com", password: "password123" }
+      ];
 
-    const isValidCredential = validCredentials.some(
-      cred => cred.email === email && cred.password === password
-    );
+      const isValidCredential = validCredentials.some(
+        cred => cred.email === email && cred.password === password
+      );
 
-    if (isValidCredential) {
-      // Create a mock session for demo purposes
-      const mockUser = {
-        id: email === "admin@goldengrove.com" ? "admin-123" : "sales-123",
-        email: email,
-        role: email === "admin@goldengrove.com" ? "admin" : "sales"
-      };
+      if (isValidCredential) {
+        // Create a mock session for demo purposes
+        const mockUser = {
+          id: email === "admin@goldengrove.com" ? "admin-123" : "sales-123",
+          email: email,
+          role: email === "admin@goldengrove.com" ? "admin" : "sales_rep"
+        };
 
-      // Set mock user data
-      setUser(mockUser as User);
-      setSession({ user: mockUser } as Session);
-      setCrmUser({
-        id: mockUser.id,
-        email: mockUser.email,
-        name: email === "admin@goldengrove.com" ? "Admin User" : "Sales Rep",
-        role: mockUser.role,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      });
-      setLoading(false);
+        // Set mock user data
+        setUser(mockUser as User);
+        setSession({ user: mockUser } as Session);
+        setCrmUser({
+          id: mockUser.id,
+          email: mockUser.email,
+          full_name: email === "admin@goldengrove.com" ? "Admin User" : "Sales Rep",
+          role: mockUser.role as "admin" | "sales_rep",
+          created_at: new Date().toISOString()
+        });
+        setLoading(false);
 
-      return { error: null };
-    }
-    return { error: { message: "Invalid email or password" } as AuthError };
+        // Resolve after state is updated
+        setTimeout(() => {
+          resolve({ error: null });
+        }, 50);
+      } else {
+        resolve({ error: { message: "Invalid email or password" } as AuthError });
+      }
+    });
   };
 
   const signOut = async () => {

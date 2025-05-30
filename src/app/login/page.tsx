@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -21,8 +21,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, user, crmUser } = useAuth();
   const router = useRouter();
+
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (user && crmUser) {
+      router.push("/dashboard");
+    }
+  }, [user, crmUser, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
